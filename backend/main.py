@@ -6,7 +6,7 @@ from input_handling import *
 def main():
 
     code = """ 
-ngkhyfrtykfhjnkiuygtfgcvgbhjkuygtfgvhjgyf
+print "Hello world!"
 """
 
     error = """ error """
