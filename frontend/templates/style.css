@@ -1,0 +1,135 @@
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #F8F9FA;
+    color: #343A40;
+}
+textarea, input[type="file"], select, button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #CED4DA;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+textarea:disabled, input[type="file"]:disabled {
+    background-color: #E9ECEF;
+}
+button {
+    background-color: #61D2E4;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #4EB4C8;
+}
+.formatted-output {
+    background-color: #FFF3CD;
+    padding: 10px;
+    border: 1px solid #FFB800;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+} */
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    /* background: linear-gradient(to right, #dbdbdb, #a0a1a1); */
+    margin: 0;
+    padding: 20px;
+    margin: auto 20rem;
+}
+
+
+/* Header */
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Text areas */
+#code-file, #error-file {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+/* File input */
+.select-file {
+    display: block;
+}
+.select-file::file-selector-button {
+    background-color: #ffcc33;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+/* Select box */
+#model {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+/* Button */
+#sendbutton {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #45dddd;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#sendbutton:hover {
+    background-color: #0056b3;
+}
+
+/* Result */
+h2 {
+    color: #333;
+    margin-top: 20px;
+}
+
+.formatted-output {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.input-box{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    /* padding: 10px; */
+    padding-bottom: 15px;
+}
+
+#result{
+    max-height: 500px;
+    overflow: scroll;
+}

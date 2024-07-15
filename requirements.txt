@@ -1,0 +1,8 @@
+Flask
+flask-socketio
+serpapi
+langchain
+google-search-results
+langchain-anthropic
+crewai
+crewai-tools

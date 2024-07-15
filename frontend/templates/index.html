@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Browsing Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #F8F9FA;
+            color: #343A40;
+            margin: 0px 300px;
+            
+        }
+
+        textarea,
+        input[type="file"],
+        select,
+        button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            /* border: 1px solid #CED4DA;/ */
+            /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); */
+        }
+
+        textarea:disabled,
+        input[type="file"]:disabled {
+            background-color: #E9ECEF;
+        }
+
+        button {
+            background-color: #61D2E4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4EB4C8;
+        }
+
+        .formatted-output {
+            background-color: #FFF3CD;
+            padding: 10px;
+            border: 1px solid #FFB800;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: scroll;
+        }
+
+        .select-file {
+            display: block;
+            max-width: 15rem;
+        }
+
+        .select-file::file-selector-button {
+            background-color: #ffcc33;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info label {
+            margin-right: 10px;
+            flex-grow: 1;
+        }
+
+        .file-info button {
+            background-color: #FF6B6B;
+            color: #fff;
+            width: 100px;
+        }
+
+        .file-info button:hover {
+            background-color: #FF4949;
+        }
+
+        #sendbutton:hover{
+            background-color: #4EB4C8;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+            socket.on('connect', function () {
+                console.log('Connected to server');
+            });
+
+            socket.on('result', function (data) {
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Generated: ' + data.output;
+            });
+
+            function readFileContent(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = event => resolve(event.target.result);
+                    reader.onerror = error => reject(error);
+                    reader.readAsText(file);
+                });
+            }
+
+            async function handleFileSelect(inputElement, textareaId, removeButtonId) {
+                const removeButton = document.getElementById(removeButtonId);
+
+                if (inputElement.files[0]) {
+                    const fileText = await readFileContent(inputElement.files[0]);
+                    document.getElementById(textareaId).value = fileText;
+                    document.getElementById(textareaId).disabled = true;
+                    removeButton.style.display = 'inline';
+                } else {
+                    document.getElementById(textareaId).value = "";
+                    document.getElementById(textareaId).disabled = false;
+                    removeButton.style.display = 'none';
+                }
+            }
+
+            function handleRemoveFile(inputElementId, textareaId, removeButtonId) {
+                const inputElement = document.getElementById(inputElementId);
+                const removeButton = document.getElementById(removeButtonId);
+
+                inputElement.value = null;
+                document.getElementById(textareaId).value = "";
+                document.getElementById(textareaId).disabled = false;
+                removeButton.style.display = 'none';
+            }
+
+            document.getElementById('code-file').addEventListener('change', async function () {
+                await handleFileSelect(this, 'code', 'remove-code-file');
+            });
+
+            document.getElementById('error-file').addEventListener('change', async function () {
+                await handleFileSelect(this, 'error', 'remove-error-file');
+            });
+
+            document.getElementById('remove-code-file').onclick = function () {
+                handleRemoveFile('code-file', 'code', 'remove-code-file');
+            };
+
+            document.getElementById('remove-error-file').onclick = function () {
+                handleRemoveFile('error-file', 'error', 'remove-error-file');
+            };
+
+            document.getElementById('sendbutton').onclick = async function () {
+                var codeText = document.getElementById('code').value;
+                var errorText = document.getElementById('error').value;
+                var model = document.getElementById('model').value;
+
+                if (!codeText || !errorText) {
+                    alert("Both code and error must be provided either through text area or file.");
+                    return;
+                }
+
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Your result is generating...';
+
+                socket.emit('extract_input', { code: codeText, error: errorText, model: model });
+            };
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Browsing Agent</h1>
+    <div>
+        <textarea id="code" placeholder="Enter your code here..." rows="10"></textarea>
+    </div>
+    <div class="file-info">
+        <input class="select-file" type="file" id="code-file" accept=".txt">
+        <button id="remove-code-file" style="display:none;">Remove File</button>
+    </div>
+    <div>
+        <textarea id="error" placeholder="Enter error message here..." rows="5"></textarea>
+    </div>
+    <div class="file-info">
+        <input class="select-file" type="file" id="error-file" accept=".txt">
+        <button id="remove-error-file" style="display:none;">Remove File</button>
+    </div>
+    <div>
+        <select id="model">
+            <option value="claude">Claude</option>
+            <option value="openai">OpenAI</option>
+        </select>
+    </div>
+    <button id="sendbutton">Send</button>
+    <h2>Result:</h2>
+    <div id="result" class="formatted-output"></div>
+</body>
+
+</html>
